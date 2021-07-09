@@ -263,8 +263,8 @@ class ArgoCD(StepImplementer):
                 repo_dir=self.create_working_dir_sub_dir(clone_repo_dir_name),
                 repo_url=deployment_config_repo,
                 repo_branch=deployment_config_repo_branch,
-                user_email=self.get_value('git-email'),
-                user_name=self.get_value('git-name')
+                git_email=self.get_value('git-email'),
+                git_name=self.get_value('git-name')
             )
 
             # update values file, commit it, push it, and tag it
@@ -622,8 +622,10 @@ class ArgoCD(StepImplementer):
         repo_dir,
         repo_url,
         repo_branch,
-        user_email,
-        user_name
+        git_email,
+        git_name,
+	username,
+	password
     ):
         """Clones and checks out the deployment configuration repository.
 
@@ -633,9 +635,9 @@ class ArgoCD(StepImplementer):
             Path to where to clone the repository
         repo_uri : str
             URI of the repository to clone.
-        user_email : str
+        git_email : str
             email to use when performing git operations in the cloned repository
-        user_name : str
+        git_name : str
             name to use when performing git operations in the cloned repository
 
         Returns
@@ -651,7 +653,22 @@ class ArgoCD(StepImplementer):
         * if error checking out branch of repository
         * if error configuring repo user
         """
-        try:
+        deployment_config_repo_match = ArgoCD.GIT_REPO_REGEX.match(repo_url)
+        deployment_config_repo_protocol = deployment_config_repo_match.groupdict()['protocol']
+        deployment_config_repo_address = deployment_config_repo_match.groupdict()['address']
+
+        # if deployment config repo uses http/https push using user/pass
+        # else push using ssh
+        if deployment_config_repo_protocol and re.match(
+            r'^http://|^https://',
+            deployment_config_repo_protocol
+        ):
+            username = self.get_value('git-username')
+            password = self.get_value('git-password')
+
+            deployment_config_repo_with_user_pass = \
+                f"{deployment_config_repo_protocol}{username}:{password}" \
+                f"@{deployment_config_repo_address}"try:
             sh.git.clone( # pylint: disable=no-member
                 repo_url,
                 repo_dir,
@@ -691,14 +708,14 @@ class ArgoCD(StepImplementer):
         try:
             sh.git.config( # pylint: disable=no-member
                 'user.email',
-                user_email,
+                git_email,
                 _cwd=repo_dir,
                 _out=sys.stdout,
                 _err=sys.stderr
             )
             sh.git.config( # pylint: disable=no-member
                 'user.name',
-                user_name,
+                git_name,
                 _cwd=repo_dir,
                 _out=sys.stdout,
                 _err=sys.stderr
@@ -706,8 +723,8 @@ class ArgoCD(StepImplementer):
         except sh.ErrorReturnCode as error:
             # NOTE: this should never happen
             raise StepRunnerException(
-                f"Unexpected error configuring git user.email ({user_email})"
-                f" and user.name ({user_name}) for repository ({repo_url})"
+                f"Unexpected error configuring git user.email ({git_email})"
+                f" and user.name ({git_name}) for repository ({repo_url})"
                 f" in directory ({repo_dir}): {error}"
             ) from error
 
