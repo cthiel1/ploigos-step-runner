@@ -668,7 +668,9 @@ class ArgoCD(StepImplementer):
 
             deployment_config_repo_with_user_pass = \
                 f"{deployment_config_repo_protocol}{username}:{password}" \
-                f"@{deployment_config_repo_address}"try:
+                f"@{deployment_config_repo_address}"
+		
+	try:
             sh.git.clone( # pylint: disable=no-member
                 repo_url,
                 repo_dir,
