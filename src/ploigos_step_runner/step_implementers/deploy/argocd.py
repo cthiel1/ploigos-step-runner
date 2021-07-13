@@ -621,6 +621,7 @@ class ArgoCD(StepImplementer):
 
     @staticmethod
     def __clone_repo(
+	self,    
         repo_dir,
         repo_url,
         repo_branch,
