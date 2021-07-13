@@ -669,8 +669,8 @@ class ArgoCD(StepImplementer):
             #username = self.get_value('git-username')
             #password = self.get_value('git-password')
             
-            
-        deployment_config_repo_with_user_pass = \
+
+            deployment_config_repo_with_user_pass = \
                 f"{deployment_config_repo_protocol}{username}:{password}" \
                 f"@{deployment_config_repo_address}"
 		
