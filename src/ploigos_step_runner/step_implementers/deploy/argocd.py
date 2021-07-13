@@ -264,7 +264,9 @@ class ArgoCD(StepImplementer):
                 repo_url=deployment_config_repo,
                 repo_branch=deployment_config_repo_branch,
                 git_email=self.get_value('git-email'),
-                git_name=self.get_value('git-name')
+                git_name=self.get_value('git-name'),
+	        username = self.get_value('git-username'),
+                password = self.get_value('git-password')
             )
 
             # update values file, commit it, push it, and tag it
