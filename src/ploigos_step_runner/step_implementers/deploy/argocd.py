@@ -265,8 +265,8 @@ class ArgoCD(StepImplementer):
                 repo_branch=deployment_config_repo_branch,
                 git_email=self.get_value('git-email'),
                 git_name=self.get_value('git-name'),
-	        #username = self.get_value('git-username'),
-                #password = self.get_value('git-password')
+	        username = self.get_value('git-username'),
+                password = self.get_value('git-password')
             )
 
             # update values file, commit it, push it, and tag it
@@ -620,15 +620,14 @@ class ArgoCD(StepImplementer):
         return host_urls
 
     @staticmethod
-    def __clone_repo(
-	self,    
+    def __clone_repo(    
         repo_dir,
         repo_url,
         repo_branch,
         git_email,
         git_name,
-	#username,
-	#password
+	username,
+	password
     ):
         """Clones and checks out the deployment configuration repository.
 
@@ -666,8 +665,8 @@ class ArgoCD(StepImplementer):
             r'^http://|^https://',
             deployment_config_repo_protocol
         ):
-            username = self.get_value('git-username')
-            password = self.get_value('git-password')
+            #username = self.get_value('git-username')
+            #password = self.get_value('git-password')
 
             deployment_config_repo_with_user_pass = \
                 f"{deployment_config_repo_protocol}{username}:{password}" \
