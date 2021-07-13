@@ -658,8 +658,8 @@ class ArgoCD(StepImplementer):
         deployment_config_repo_match = ArgoCD.GIT_REPO_REGEX.match(repo_url)
         deployment_config_repo_protocol = deployment_config_repo_match.groupdict()['protocol']
         deployment_config_repo_address = deployment_config_repo_match.groupdict()['address']
-	print(f"Username ({username})")
-
+        print(f"Username ({username})")
+	
         # if deployment config repo uses http/https push using user/pass
         # else push using ssh
         if deployment_config_repo_protocol and re.match(
